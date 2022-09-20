@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useMotionValue } from "framer-motion";
 const Wrapper = styled(motion.div)`
     height: 100vh;
     width: 100vw;
@@ -35,21 +35,14 @@ const boxVariants = {
     drag: { backgroundColor: "rgb(52, 152, 219)", transition: { duration: 3 } },
 };
 function App() {
-    const biggerBoxRef = useRef<HTMLDivElement>(null);
+    const x = useMotionValue(0);
+    useEffect(() => {
+        x.onChange(() => console.log(x.get()));
+    }, [x]);
     return (
         <Wrapper>
-            <BiggerBox ref={biggerBoxRef}>
-                <Box
-                    drag
-                    dragSnapToOrigin
-                    dragElastic={0.5}
-                    dragConstraints={biggerBoxRef}
-                    variants={boxVariants}
-                    whileDrag="drag"
-                    whileHover="hover"
-                    whileTap="click"
-                />
-            </BiggerBox>
+            <button onClick={() => x.set(200)}>clickme</button>
+            <Box style={{ x }} drag="x" dragSnapToOrigin />
         </Wrapper>
     );
 }
