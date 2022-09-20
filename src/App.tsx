@@ -1,24 +1,22 @@
 import styled from "styled-components";
 import { useRef, useEffect } from "react";
 
-import { motion, Variants, useMotionValue } from "framer-motion";
+import {
+    motion,
+    Variants,
+    useMotionValue,
+    useTransform,
+    useViewportScroll,
+} from "framer-motion";
 const Wrapper = styled(motion.div)`
-    height: 100vh;
+    height: 500vh;
     width: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient (135deg, rgb(238, 0, 153), rgba(221, 0, 28));
 `;
-const BiggerBox = styled.div`
-    width: 600px;
-    height: 600px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-`;
+
 const Box = styled(motion.div)`
     width: 200px;
     height: 200px;
@@ -36,13 +34,24 @@ const boxVariants = {
 };
 function App() {
     const x = useMotionValue(0);
+    const rotate = useTransform(x, [-800, 800], [-360, 360]);
     useEffect(() => {
-        x.onChange(() => console.log(x.get()));
+        rotate.onChange(() => console.log(rotate.get()));
     }, [x]);
+    const gradient = useTransform(
+        x,
+        [-800, 0, 800],
+        [
+            "linear-gradient(135deg,rgb(106, 137, 204),rgb(130, 204, 221))",
+            "linear-gradient(135deg,rgb(246, 185, 59),rgb(96, 163, 188))",
+            "linear-gradient (135deg, rgb(238, 0, 153), rgba(221, 0, 28))",
+        ]
+    );
+    const { scrollYProgress } = useViewportScroll();
+    const scale = useTransform(scrollYProgress, [0, 1], [0, 5]);
     return (
-        <Wrapper>
-            <button onClick={() => x.set(200)}>clickme</button>
-            <Box style={{ x }} drag="x" dragSnapToOrigin />
+        <Wrapper style={{ background: gradient }}>
+            <Box style={{ x, rotate, scale }} drag="x" dragSnapToOrigin />
         </Wrapper>
     );
 }
